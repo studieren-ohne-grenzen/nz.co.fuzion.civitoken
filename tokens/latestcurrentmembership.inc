@@ -1,5 +1,13 @@
 <?php
 
+/**
+IMPORTANT: SOG-specific additions
+
+ - custom_37 is SOG's membership fee
+ - custom_43 is SOG's Mandatsreferenz
+**/
+
+
 function latestcurrentmembership_civitoken_declare($token){
   return array(
     $token . '.type' => 'Latest Current Membership Type',
@@ -21,6 +29,8 @@ function latestcurrentmembership_civitoken_declare($token){
     $token . '.allfee' => 'Latest Membership Fee',
     $token . '.allstatus' => 'Latest Membership Status',
     $token . '.membership_id' => 'Latest Membership ID',
+    $token . '.custom_37' => 'SOG Mitgliedsbeitrag',
+    $token . '.custom_43' => 'SOG Mandatsreferenz'
   );
 }
 
@@ -56,7 +66,7 @@ function latestcurrentmembership_get_tokens($cid, &$value, $onlyActive) {
     $membership = civicrm_api3('membership', 'getsingle', $params);
   }
   catch (Exception $e) {
-    $tokens = array('type', 'end_date', 'start_date', 'join_date', 'fee', 'status');
+    $tokens = array('type', 'end_date', 'start_date', 'join_date', 'fee', 'status', 'custom_37', 'custom_43');
     foreach ($tokens as $token) {
       $value['latestcurrentmembership.' . $prefix . $token] = NULL;
     }
@@ -74,6 +84,8 @@ function latestcurrentmembership_get_tokens($cid, &$value, $onlyActive) {
     $value['latestcurrentmembership.' . $prefix . 'fee'] = $membership['api.membership_type.getsingle']['minimum_fee'];
     $value['latestcurrentmembership.' . $prefix . 'status'] = $statuses[$membership['status_id']];
     $value['latestcurrentmembership.' . $prefix . 'membership'] = $statuses[$membership['id']];
+    $value['latestcurrentmembership.' . $prefix . 'custom_37'] = $membership['custom_37'];
+    $value['latestcurrentmembership.' . $prefix . 'custom_43'] = $membership['custom_43'];
   }
   return $value;
 }
